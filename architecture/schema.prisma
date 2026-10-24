@@ -1,0 +1,375 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. TENANCY & ACCESS CONTROL
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Organization {
+  id           String        @id @default(uuid())
+  name         String
+  slug         String        @unique
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  users        User[]
+  agents       Agent[]
+  phoneNumbers PhoneNumber[]
+  contacts     Contact[]
+  campaigns    Campaign[]
+  appointments Appointment[]
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  OPERATOR
+  ANALYST
+}
+
+model User {
+  id             String       @id @default(uuid())
+  orgId          String
+  organization   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  email          String       @unique
+  passwordHash   String
+  name           String
+  role           Role         @default(OPERATOR)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([orgId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 2. AGENTS & PROMPT CONFIGURATION
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Agent {
+  id             String         @id @default(uuid())
+  orgId          String
+  organization   Organization   @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  name           String         // e.g., "Rahul", "Priya"
+  description    String?
+  isActive       Boolean        @default(true)
+  
+  // Voice & Telephony Config
+  sttProvider    String         @default("deepgram") // deepgram | sarvam
+  sttModel       String         @default("flux-general-multi")
+  sttLanguage    String         @default("hi,en")
+  
+  ttsProvider    String         @default("elevenlabs") // elevenlabs | sarvam
+  ttsVoiceId     String         // e.g. "pNInz6obpgDQGcFmaJgB"
+  ttsModel       String         @default("eleven_flash_v2_5")
+  ttsStability   Float?         @default(0.5)
+  ttsSimilarity  Float?         @default(0.75)
+  ttsSpeed       Float?         @default(1.0)
+  
+  // LLM Config
+  llmModel       String         @default("gpt-4o-mini")
+  temperature    Float          @default(0.3)
+  maxTokens      Int            @default(150)
+  systemPrompt   String         @db.Text
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  versions       AgentVersion[]
+  callSessions   CallSession[]
+  campaigns      Campaign[]
+
+  @@index([orgId])
+}
+
+model AgentVersion {
+  id           String   @id @default(uuid())
+  agentId      String
+  agent        Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  version      Int
+  systemPrompt String   @db.Text
+  configDelta  Json?    // Snapshot of model, voice params
+  changeLog    String?
+  createdById  String?
+  createdAt    DateTime @default(now())
+
+  @@unique([agentId, version])
+}
+
+model PhoneNumber {
+  id             String       @id @default(uuid())
+  orgId          String
+  organization   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  number         String       @unique // E.164 e.g. "+918000000000"
+  provider       String       // "smartflo" | "twilio"
+  status         String       @default("active") // "active" | "released"
+  inboundAgentId String?
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([orgId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. CRM, CONTACTS & PERSISTENT MEMORY
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Contact {
+  id           String          @id @default(uuid())
+  orgId        String
+  organization Organization    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  phoneNumber  String          // Normalized national or E.164
+  name         String?
+  email        String?
+  company      String?
+  status       String          @default("lead") // lead | qualified | customer | dnd
+  callCount    Int             @default(0)
+  lastCallAt   DateTime?
+  customFields Json?           @default("{}")
+
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  memories     ContactMemory[]
+  callSessions CallSession[]
+  appointments Appointment[]
+  campaignLeads CampaignLead[]
+
+  @@unique([orgId, phoneNumber])
+  @@index([orgId, status])
+}
+
+model ContactMemory {
+  id           String   @id @default(uuid())
+  contactId    String
+  contact      Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  key          String   // e.g. "budget", "product_interest", "tech_stack"
+  value        String   @db.Text
+  sourceCallId String?
+  confidence   Float?   @default(1.0)
+  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now())
+
+  @@unique([contactId, key])
+  @@index([contactId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. CALL SESSIONS, TURNS & RECORDINGS
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum CallDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum CallStatus {
+  QUEUED
+  INITIATED
+  RINGING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  BUSY
+  NO_ANSWER
+  CANCELED
+}
+
+model CallSession {
+  id              String          @id @default(uuid())
+  orgId           String
+  callSid         String          @unique // Smartflo / Twilio Call ID
+  direction       CallDirection
+  status          CallStatus      @default(INITIATED)
+  
+  // Relations
+  contactId       String?
+  contact         Contact?        @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  agentId         String?
+  agent           Agent?          @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  campaignId      String?
+  campaign        Campaign?       @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  // Telephony Metadata
+  fromNumber      String
+  toNumber        String
+  provider        String          // "smartflo" | "twilio"
+  startedAt       DateTime
+  answeredAt      DateTime?
+  endedAt         DateTime?
+  durationSec     Int?            @default(0)
+  hangupCause     String?         // "normal_clearing", "caller_abandoned", "timeout"
+
+  // Metrics & Latencies (Averaged in ms)
+  avgLatencyMs    Int?
+  sttLagAvgMs     Int?
+  llmTtftAvgMs    Int?
+  ttsLatencyAvgMs Int?
+  bargeInCount    Int             @default(0)
+
+  // Conversation Output
+  transcriptText  String?         @db.Text
+  summary         String?         @db.Text
+  sentiment       String?         // "positive", "neutral", "negative", "frustrated"
+  extractedLead   Json?           // { name, email, date, time }
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  turns           CallTurn[]
+  recordings      CallRecording[]
+  toolExecutions  ToolExecution[]
+  appointment     Appointment?
+
+  @@index([orgId, status])
+  @@index([contactId])
+  @@index([startedAt])
+}
+
+model CallTurn {
+  id             String      @id @default(uuid())
+  callSessionId  String
+  callSession    CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+  seq            Int         // Turn order sequence 1, 2, 3...
+  role           String      // "user" | "agent" | "system"
+  speakerName    String?     // "caller" | "Rahul"
+  text           String      @db.Text
+  
+  // Granular Performance Metrics (Per Turn)
+  sttDurationMs  Int?
+  llmLatencyMs   Int?        // Time to first token
+  ttsLatencyMs   Int?        // TTS synthesis time
+  totalLatencyMs Int?        // Total utterance_end -> audio playout
+  wasInterrupted Boolean     @default(false)
+  unheard        Boolean     @default(false)
+
+  timestamp      DateTime    @default(now())
+
+  @@index([callSessionId, seq])
+}
+
+model CallRecording {
+  id            String      @id @default(uuid())
+  callSessionId String
+  callSession   CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+  
+  // Storage Decoupling (S3 / GCS / Azure Blob)
+  storagePath   String      // e.g. "recordings/2026/10/call-HYD13-xxx.wav"
+  storageBucket String      // e.g. "voxa-call-recordings"
+  contentType   String      @default("audio/wav")
+  channelLayout String      @default("stereo") // left: caller, right: agent
+  fileSizeBytes Int
+  durationMs    Int
+  
+  // Audio waveform peaks data (Precomputed for frontend waveform scrubbing)
+  waveformPeaks Json?       // Float array [0.1, 0.4, 0.8, ...]
+  
+  isProcessed   Boolean     @default(true)
+  skippedReason String?     // e.g., "call exceeded max duration limit"
+  createdAt     DateTime    @default(now())
+
+  @@index([callSessionId])
+}
+
+model ToolExecution {
+  id            String      @id @default(uuid())
+  callSessionId String
+  callSession   CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+  toolName      String      // "check_availability" | "book_appointment" | "send_meeting_email"
+  inputParams   Json
+  outputResult  Json?
+  durationMs    Int
+  isSuccess     Boolean     @default(true)
+  errorMessage  String?
+  createdAt     DateTime    @default(now())
+
+  @@index([callSessionId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. APPOINTMENTS & OUTBOUND CAMPAIGNS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Appointment {
+  id            String       @id @default(uuid())
+  orgId         String
+  organization  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  callSessionId String?      @unique
+  callSession   CallSession? @relation(fields: [callSessionId], references: [id], onDelete: SetNull)
+  contactId     String
+  contact       Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  
+  title         String       @default("Product Consultation - Xverse")
+  startTime     DateTime
+  endTime       DateTime
+  timezone      String       @default("Asia/Kolkata")
+  status        String       @default("scheduled") // scheduled | completed | cancelled | rescheduled
+  
+  googleEventId String?
+  meetingLink   String?
+  notes         String?      @db.Text
+  emailSent     Boolean      @default(false)
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([orgId, startTime])
+  @@index([contactId])
+}
+
+model Campaign {
+  id                String         @id @default(uuid())
+  orgId             String
+  organization      Organization   @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  name              String
+  agentId           String
+  agent             Agent          @relation(fields: [agentId], references: [id])
+  status            String         @default("draft") // draft | scheduled | running | paused | completed
+
+  // Throttling & Dialing Constraints
+  callingHoursStart String         @default("09:30") // IST
+  callingHoursEnd   String         @default("19:00")
+  concurrencyLimit  Int            @default(2)
+  retryLimit        Int            @default(2)
+  retryIntervalMins Int            @default(30)
+  
+  // Stats Aggregation
+  totalLeads        Int            @default(0)
+  contacted         Int            @default(0)
+  converted         Int            @default(0)
+  failed            Int            @default(0)
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  leads             CampaignLead[]
+  callSessions      CallSession[]
+
+  @@index([orgId, status])
+}
+
+model CampaignLead {
+  id            String    @id @default(uuid())
+  campaignId    String
+  campaign      Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contactId     String
+  contact       Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  
+  status        String    @default("pending") // pending | calling | answered | busy | failed | converted
+  attempts      Int       @default(0)
+  lastAttemptAt DateTime?
+  nextAttemptAt DateTime?
+  disposition   String?   // "booked_meeting", "callback_requested", "declined", "unreachable"
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([campaignId, contactId])
+  @@index([campaignId, status])
+}

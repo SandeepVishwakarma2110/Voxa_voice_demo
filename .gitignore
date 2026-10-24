@@ -1,16 +1,20 @@
 # Dependencies
 node_modules/
+**/node_modules/
 
-# Environment and Secrets (CRITICAL: Do NOT remove)
+# Environment and Secrets (CRITICAL: Do NOT commit)
 .env
-.env.*
-!.env.example
+**/.env
+**/.env.*
+!**/.env.example
 service-account.json
+**/service-account.json
 *.pem
 *.key
 
 # Logs and Debug outputs
 logs/
+**/logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -18,11 +22,13 @@ yarn-error.log*
 
 # Call recordings and media files
 recordings/
+**/recordings/
 *.wav
 *.mp3
 
 # OS generated files
 .DS_Store
+**/.DS_Store
 Thumbs.db
 
 # Build outputs and coverage

@@ -3,6 +3,8 @@ import {
   handleIncomingCall,
   handleStatusCallback,
   getActiveSessions,
+  getCallLogs,
+  getCallLogBySid,
 } from '../controllers/callController.js';
 
 const router = Router();
@@ -15,5 +17,9 @@ router.post('/status', handleStatusCallback);
 
 // Debug (disable or add auth in production)
 router.get('/sessions', getActiveSessions);
+
+// Call logs from database
+router.get('/logs', getCallLogs);
+router.get('/logs/:callSid', getCallLogBySid);
 
 export default router;

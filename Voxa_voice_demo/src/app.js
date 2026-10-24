@@ -37,6 +37,16 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
+// CORS middleware allowing frontend dashboard access
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-api-key, Range');
+  res.header('Access-Control-Expose-Headers', 'Content-Range, Accept-Ranges, Content-Length');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
 // Smartflo posts JSON; keep urlencoded too so either content type parses.
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());

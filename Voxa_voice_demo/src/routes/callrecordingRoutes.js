@@ -17,7 +17,7 @@ import { logger } from '../utils/logger.js';
 
 const router = express.Router();
 
-const API_KEY = process.env.RECORDINGS_API_KEY || '';
+const API_KEY = (process.env.RECORDINGS_API_KEY || '').trim();
 
 if (!API_KEY) {
   logger.warn(
@@ -30,7 +30,8 @@ if (!API_KEY) {
 function keyMatches(given) {
   if (!API_KEY) return true;
   if (typeof given !== 'string' || !given) return false;
-  const a = Buffer.from(given);
+  const trimmedGiven = given.trim();
+  const a = Buffer.from(trimmedGiven);
   const b = Buffer.from(API_KEY);
   return a.length === b.length && timingSafeEqual(a, b);
 }

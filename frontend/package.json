@@ -1,0 +1,13 @@
+{
+  "name": "voxa-voice-dashboard",
+  "version": "1.0.0",
+  "description": "Voxa Voice AI Platform Operator Dashboard with Billing & Recharge Hub",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["voice-ai", "telephony", "smartflo", "twilio", "recharge", "dashboard"],
+  "author": "Voxa",
+  "license": "ISC"
+}

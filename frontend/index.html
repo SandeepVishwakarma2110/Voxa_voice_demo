@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voxa Voice AI — Operator Console & Billing Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Ambient Organic Liquid Blobs in Background -->
+  <div class="liquid-ambient-container">
+    <div class="liquid-orb orb-1"></div>
+    <div class="liquid-orb orb-2"></div>
+    <div class="liquid-orb orb-3"></div>
+    <div class="liquid-orb orb-4"></div>
+  </div>
+
+  <!-- Interactive Floating Cursor Spotlight -->
+  <div id="cursorAmbientGlow"></div>
+
+  <div class="app-container">
+    <!-- ── Sidebar Navigation ─────────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="brand-section">
+        <div class="brand-logo">
+          <!-- Voice waveform logo icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 2v20M17 5v14M7 5v14M2 9v6M22 9v6"></path>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>Voxa Voice AI</h1>
+          <span class="brand-badge">Enterprise Console</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-label">Telephony & AI</div>
+        
+        <div class="nav-item" data-tab="wallboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          <span>Live Wallboard</span>
+          <span class="nav-pill live-pulse" id="navLivePill">2 Live</span>
+        </div>
+
+        <div class="nav-item" data-tab="calls">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span>Call Logs & Audio</span>
+        </div>
+
+        <div class="nav-item" data-tab="campaigns">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <span>Outbound Dialer</span>
+        </div>
+
+        <div class="nav-label">Financials & Credits</div>
+
+        <div class="nav-item active" data-tab="recharge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          <span>Recharge & Wallet</span>
+          <span class="nav-pill recharge-highlight">Top-Up</span>
+        </div>
+
+        <div class="nav-label">Intelligence & Agents</div>
+
+        <div class="nav-item" data-tab="crm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>CRM Memory Vault</span>
+        </div>
+
+        <div class="nav-item" data-tab="agents">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Agent Personas</span>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <div class="status-indicator"></div>
+          <div>
+            <div style="font-weight: 700; color: #fff;">Smartflo Trunk Connected</div>
+            <div style="font-size: 0.72rem; color: var(--text-subtle);">Target Latency: &lt;800ms</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Main App Content ──────────────────────────────────────────────── -->
+    <main class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h2 class="page-title" id="topbarPageTitle">Billing, Wallet & Recharge Hub</h2>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Prominent Wallet Widget -->
+          <div class="wallet-widget">
+            <div class="wallet-details">
+              <span class="wallet-label">Wallet Balance</span>
+              <div class="wallet-amount" id="topbarWalletBalance">
+                ₹4,250.00
+                <span id="topbarMinutesEst">~885 mins</span>
+              </div>
+            </div>
+            <button class="btn-quick-recharge" id="topbarRechargeBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Recharge
+            </button>
+          </div>
+
+          <!-- Make Real Outbound Call -->
+          <button class="btn-outbound-dial" id="topbarDialBtn" title="Make Outbound Telecom Call">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path><polyline points="16 2 22 2 22 8"></polyline><line x1="15" y1="9" x2="22" y2="2"></line></svg>
+            <span>Outbound Call</span>
+          </button>
+
+          <!-- Simulate Live Inbound Call -->
+          <button class="btn-supervisor-listen" style="padding: 9px 16px; font-weight:700;" onclick="window.app.triggerSimulatedInboundCall()">
+            + Test Inbound Call
+          </button>
+
+          <!-- Operator Profile -->
+          <div class="operator-profile">
+            <div class="avatar">XV</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Content Body -->
+      <div class="content-body">
+
+        <!-- ──────────────────────────────────────────────────────────────────
+             VIEW 1: RECHARGE & BILLING HUB
+             ────────────────────────────────────────────────────────────────── -->
+        <section id="view-recharge" class="view-section active">
+          <!-- Hero Banner with Liquid Wave Canvas -->
+          <div class="wallet-hero-banner">
+            <canvas id="liquidSoundwaveCanvas"></canvas>
+
+            <div class="wallet-hero-content">
+              <h2>Account Available Credits</h2>
+              <div class="wallet-hero-balance" id="heroBalanceAmount">
+                ₹4,250.00 <small>/ INR</small>
+              </div>
+              <div class="wallet-stats-row">
+                <div class="wallet-stat-item">
+                  <span class="stat-item-label">Estimated Call Runway</span>
+                  <span class="stat-item-value" id="heroMinutesLeft">885 Mins</span>
+                </div>
+                <div class="wallet-stat-item">
+                  <span class="stat-item-label">Average Burn Rate</span>
+                  <span class="stat-item-value" id="heroBurnRate">₹4.80 / min</span>
+                </div>
+                <div class="wallet-stat-item">
+                  <span class="stat-item-label">Days Remaining (@ 60m/day)</span>
+                  <span class="stat-item-value" id="heroRunwayDays">~14 Days</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="wallet-hero-actions">
+              <button class="btn-large-recharge" id="heroRechargeBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Instant Wallet Top-Up
+              </button>
+              <div class="auto-recharge-toggle-box">
+                <span>Auto-Recharge (₹2,000 on &lt;₹500):</span>
+                <label class="switch">
+                  <input type="checkbox" checked id="autoRechargeToggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Recharge Packs -->
+          <div style="font-size: 1.35rem; font-weight: 800; margin-bottom: 8px; color: #fff; display: flex; align-items: center; gap: 10px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--cyan-liquid);"><path d="M12 2v20M17 5v14M7 5v14M2 9v6M22 9v6"></path></svg>
+            Voice Credit Plans & Packs
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 26px;">Credits cover carrier PSTN telephony, Deepgram multilingual STT, GPT-4o-mini reasoning, and ElevenLabs voice streaming.</p>
+
+          <div class="plans-grid" id="plansGridContainer">
+            <!-- Plans dynamically injected from recharge.js -->
+          </div>
+
+          <!-- Custom Recharge Calculator -->
+          <div style="font-size: 1.35rem; font-weight: 800; margin-bottom: 8px; color: #fff;">Custom Recharge Calculator</div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 26px;">Choose a custom budget amount with dynamic GST and minute allocation.</p>
+
+          <div class="custom-recharge-card">
+            <div>
+              <div class="custom-input-group">
+                <label style="font-size:0.85rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:10px;">Enter Custom Top-Up Amount</label>
+                <div style="position:relative; display:flex; align-items:center; margin-bottom:18px;">
+                  <span style="position:absolute; left:18px; font-size:1.4rem; font-weight:800; color:var(--cyan-liquid);">₹</span>
+                  <input type="number" id="customAmountInput" class="currency-input" value="2500" step="500" min="500" max="100000">
+                </div>
+                <input type="range" id="customAmountSlider" class="recharge-slider" min="500" max="25000" step="500" value="2500">
+                <div class="quick-amount-chips">
+                  <div class="chip" data-amount="1000">₹1,000</div>
+                  <div class="chip active" data-amount="2500">₹2,500</div>
+                  <div class="chip" data-amount="5000">₹5,000</div>
+                  <div class="chip" data-amount="10000">₹10,000</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="custom-estimate-box">
+              <div class="estimate-item">
+                <span>Estimated Spoken Minutes:</span>
+                <strong id="calcEstMins" style="color:var(--cyan-liquid); font-size:1.05rem;">~610 Minutes</strong>
+              </div>
+              <div class="estimate-item">
+                <span>Net Recharge Credits:</span>
+                <span id="calcSubtotal">₹2,500</span>
+              </div>
+              <div class="estimate-item">
+                <span>GST (18% Input Tax Credit):</span>
+                <span id="calcGst">₹450</span>
+              </div>
+              <div class="estimate-item total">
+                <span>Total Payable:</span>
+                <span id="calcGrandTotal" style="color:var(--emerald-liquid); font-size:1.25rem;">₹2,950</span>
+              </div>
+              <button class="btn-complete-payment" id="btnCustomRecharge" style="margin-top:12px;">
+                Proceed to Checkout
+              </button>
+            </div>
+          </div>
+
+          <!-- Transactions & Invoices Ledger -->
+          <div class="table-card">
+            <div style="padding: 22px 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--glass-border);">
+              <span style="font-size:1.15rem; font-weight:800; color:#fff;">Billing Ledger & Usage History</span>
+              <span class="mono" style="font-size:0.8rem; color:var(--text-subtle);">Real-time Telephony Debits</span>
+            </div>
+            <div style="width:100%; overflow-x:auto;">
+              <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Invoice</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionsTableBody">
+                  <!-- Transactions dynamically rendered -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────────────────────────────
+             VIEW 2: LIVE CALL WALLBOARD
+             ────────────────────────────────────────────────────────────────── -->
+        <section id="view-wallboard" class="view-section">
+          <div class="kpi-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:20px; margin-bottom:32px;">
+            <div class="kpi-card" style="padding:24px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">In-Flight Sessions</span>
+                <div style="width:38px; height:38px; border-radius:10px; background:rgba(16,185,129,0.18); color:var(--emerald-liquid); display:flex; align-items:center; justify-content:center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                </div>
+              </div>
+              <div style="font-size:2.2rem; font-weight:800; color:#fff;" id="liveCallsCountBadge">2 Active</div>
+              <div style="font-size:0.8rem; color:var(--text-subtle); margin-top:6px;">Duplex WebSocket media streaming</div>
+            </div>
+
+            <div class="kpi-card" style="padding:24px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Average Turn Latency</span>
+                <div style="width:38px; height:38px; border-radius:10px; background:rgba(6,182,212,0.18); color:var(--cyan-liquid); display:flex; align-items:center; justify-content:center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+              </div>
+              <div style="font-size:2.2rem; font-weight:800; color:#fff;">645 ms</div>
+              <div style="font-size:0.8rem; color:var(--emerald-liquid); margin-top:6px; font-weight:700;">● 155ms faster than 800ms target</div>
+            </div>
+
+            <div class="kpi-card" style="padding:24px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Active Speech Engine</span>
+                <div style="width:38px; height:38px; border-radius:10px; background:rgba(99,102,241,0.18); color:var(--indigo-liquid); display:flex; align-items:center; justify-content:center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                </div>
+              </div>
+              <div style="font-size:1.6rem; font-weight:800; color:#fff;">Deepgram Flux</div>
+              <div style="font-size:0.8rem; color:var(--text-subtle); margin-top:6px;">Multilingual Hindi + English VAD</div>
+            </div>
+          </div>
+
+          <div style="font-size: 1.35rem; font-weight: 800; margin-bottom: 8px; color: #fff;">Active Telecom Channels</div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 26px;">Real-time RMS audio meters for caller voice and synthesized outbound response.</p>
+
+          <div class="wallboard-grid" id="wallboardGridContainer">
+            <!-- Wallboard active calls injected by liveWallboard.js -->
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────────────────────────────
+             VIEW 3: CALL LOGS & DUAL AUDIO PLAYER
+             ────────────────────────────────────────────────────────────────── -->
+        <section id="view-calls" class="view-section">
+          <div class="table-card">
+            <div style="padding: 20px 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--glass-border); flex-wrap:wrap; gap:16px;">
+              <div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <span style="font-size:1.18rem; font-weight:800; color:#fff;">Telephony Session Logs</span>
+                  <div class="real-time-sync-pill" id="realLogsSyncStatus">
+                    <span class="pulse-dot"></span>
+                    <span>Connecting to MongoDB...</span>
+                  </div>
+                </div>
+                <div style="font-size:0.8rem; color:var(--text-subtle); margin-top:4px;">
+                  Stereo Audio Recordings (L: Caller, R: Agent) & Real Inbound/Outbound Telecom CDRs
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:10px;">
+                <button class="filter-pill" id="btnRefreshLogs" title="Fetch fresh records from database" style="display:flex; align-items:center; gap:6px; padding:8px 16px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                  <span>Sync Database</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Filter & Search Bar -->
+            <div class="call-filters-bar">
+              <div class="filter-pills-group">
+                <button class="filter-pill active" data-filter="ALL">All Sessions</button>
+                <button class="filter-pill" data-filter="INBOUND">Inbound Only</button>
+                <button class="filter-pill" data-filter="OUTBOUND">Outbound Only</button>
+                <button class="filter-pill" data-filter="RECORDINGS">With Audio (WAV)</button>
+              </div>
+
+              <input type="text" id="callsSearchInput" class="table-search-input" placeholder="Search by Phone (+91...) or Call SID...">
+            </div>
+
+            <div style="width:100%; overflow-x:auto;">
+              <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th>Call SID</th>
+                    <th>Contact</th>
+                    <th>Direction</th>
+                    <th>Agent</th>
+                    <th>Duration</th>
+                    <th>Audio Recording</th>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="callsTableBody">
+                  <!-- Injected by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────────────────────────────
+             VIEW 4: OUTBOUND DIALER CAMPAIGNS
+             ────────────────────────────────────────────────────────────────── -->
+        <section id="view-campaigns" class="view-section">
+          <div style="font-size: 1.35rem; font-weight: 800; margin-bottom: 8px; color: #fff;">Outbound Voice Campaigns</div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 26px;">Automated cold calls and lead follow-ups utilizing Smartflo Click-to-Call (CTC) trunks.</p>
+          <div id="campaignsListContainer">
+            <!-- Injected by app.js -->
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────────────────────────────
+             VIEW 5: CRM MEMORY VAULT
+             ────────────────────────────────────────────────────────────────── -->
+        <section id="view-crm" class="view-section">
+          <div style="font-size: 1.35rem; font-weight: 800; margin-bottom: 8px; color: #fff;">Persistent Caller Memory & CRM</div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 26px;">Facts extracted during phone calls that agents retain across recurring calls.</p>
+          <div id="contactsListContainer">
+            <!-- Injected by app.js -->
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────────────────────────────
+             VIEW 6: AGENT PERSONAS STUDIO
+             ────────────────────────────────────────────────────────────────── -->
+        <section id="view-agents" class="view-section">
+          <div style="font-size: 1.35rem; font-weight: 800; margin-bottom: 8px; color: #fff;">Voice Agent Personas</div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 26px;">Manage system prompts, speech providers, and vocal traits for Rahul and Priya.</p>
+          <div id="agentsListContainer">
+            <!-- Injected by app.js -->
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ── MODAL 1: CHECKOUT & PAYMENT MODAL ─────────────────────────────────── -->
+  <div class="modal-overlay" id="rechargeModal">
+    <div class="modal-content" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="checkoutPlanTitle">Wallet Recharge</h3>
+        <button class="modal-close" id="closeRechargeModal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div style="display:flex; border-bottom:1px solid var(--glass-border); padding:16px 32px; background:rgba(8,14,26,0.5); gap:24px;">
+        <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:700; color:var(--cyan-liquid);">
+          <div style="width:22px; height:22px; border-radius:50%; background:var(--cyan-liquid); color:#000; display:flex; align-items:center; justify-content:center; font-size:0.75rem;">1</div>
+          <span>Select Payment Method</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:600; color:var(--text-subtle);">
+          <div style="width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.08); color:var(--text-subtle); display:flex; align-items:center; justify-content:center; font-size:0.75rem;">2</div>
+          <span>Review & Tax</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:600; color:var(--text-subtle);">
+          <div style="width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.08); color:var(--text-subtle); display:flex; align-items:center; justify-content:center; font-size:0.75rem;">3</div>
+          <span>Instant Top-Up</span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <!-- Form View -->
+        <div id="checkoutFormScreen">
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-bottom:24px;">
+            <div class="chip active" data-method="upi" style="padding:16px; border-radius:var(--radius-md); text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--cyan-liquid);"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <span>Instant UPI</span>
+            </div>
+            <div class="chip" data-method="card" style="padding:16px; border-radius:var(--radius-md); text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              <span>Debit / Card</span>
+            </div>
+            <div class="chip" data-method="netbanking" style="padding:16px; border-radius:var(--radius-md); text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              <span>Netbanking</span>
+            </div>
+          </div>
+
+          <!-- Method 1: UPI View -->
+          <div id="methodViewUpi" class="glass-panel" style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px; margin-bottom:20px;">
+            <div style="font-size:0.85rem; color:var(--text-muted); text-align:center;">
+              Scan dynamic QR code with any UPI app (GPay, PhonePe, Paytm, CRED):
+            </div>
+            <div style="background:#fff; padding:12px; border-radius:var(--radius-md); width:170px; height:170px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+              <svg viewBox="0 0 100 100" width="100%" height="100%">
+                <rect width="100" height="100" fill="#fff" />
+                <path d="M10,10 h30 v30 h-30 z M15,15 v20 h20 v-20 z M20,20 h10 v10 h-10 z" fill="#000" />
+                <path d="M60,10 h30 v30 h-30 z M65,15 v20 h20 v-20 z M70,20 h10 v10 h-10 z" fill="#000" />
+                <path d="M10,60 h30 v30 h-30 z M15,65 v20 h20 v-20 z M20,70 h10 v10 h-10 z" fill="#000" />
+                <rect x="50" y="50" width="10" height="10" fill="#000"/>
+                <rect x="70" y="60" width="15" height="10" fill="#000"/>
+                <rect x="60" y="80" width="25" height="10" fill="#000"/>
+                <rect x="45" y="20" width="8" height="25" fill="#000"/>
+              </svg>
+            </div>
+            <div style="font-size:0.75rem; color:var(--emerald-liquid); font-weight:700;">● Dynamic VPA Active: voxa24@icici</div>
+
+            <div style="width:100%; display:flex; gap:10px;">
+              <input type="text" id="upiVpaInput" class="currency-input" style="font-size:0.95rem; font-weight:600; padding:12px 16px;" placeholder="Or enter your VPA: e.g. mobile@okaxis" value="founder@okhdfcbank">
+            </div>
+          </div>
+
+          <!-- Method 2: Card View -->
+          <div id="methodViewCard" style="display:none; flex-direction:column; gap:12px; margin-bottom:20px;">
+            <input type="text" class="currency-input" style="font-size:0.95rem; font-weight:600; padding:12px 16px;" placeholder="Card Number (4000 1234 5678 9010)" value="4242 •••• •••• 4242">
+            <div style="display:flex; gap:12px;">
+              <input type="text" class="currency-input" style="font-size:0.95rem; font-weight:600; padding:12px 16px;" placeholder="MM/YY" value="12/28">
+              <input type="password" class="currency-input" style="font-size:0.95rem; font-weight:600; padding:12px 16px;" placeholder="CVV" value="888" maxlength="3">
+            </div>
+          </div>
+
+          <!-- Method 3: Netbanking View -->
+          <div id="methodViewNetbanking" style="display:none; flex-direction:column; gap:12px; margin-bottom:20px;">
+            <select class="currency-input" style="font-size:0.95rem; font-weight:600; padding:12px 16px;">
+              <option>HDFC Bank (Popular)</option>
+              <option>ICICI Bank</option>
+              <option>State Bank of India (SBI)</option>
+              <option>Axis Bank</option>
+              <option>Kotak Mahindra Bank</option>
+            </select>
+          </div>
+
+          <!-- Promo Code Row -->
+          <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <input type="text" id="couponCodeInput" class="currency-input" style="font-size:0.9rem; font-weight:700; padding:10px 16px; text-transform:uppercase;" placeholder="Promo Code (e.g. VOXA10)">
+            <button class="btn-quick-recharge" id="btnApplyCoupon" style="padding:10px 20px;">Apply</button>
+          </div>
+
+          <!-- Order Summary -->
+          <div class="glass-panel" style="padding:18px 24px; display:flex; flex-direction:column; gap:10px; margin-bottom:22px; font-size:0.9rem;">
+            <div style="display:flex; justify-content:space-between; color:var(--text-muted);">
+              <span>Recharge Base Credits:</span>
+              <strong id="modalSubtotal" style="color:#fff;">₹2,999</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; color:var(--emerald-liquid);">
+              <span>Coupon Discount:</span>
+              <strong id="modalDiscount">-₹0</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; color:var(--text-muted);">
+              <span>GST (18% Input Tax Credit):</span>
+              <strong id="modalGst" style="color:#fff;">₹539</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-top:1px solid var(--glass-border); padding-top:10px; font-weight:800; font-size:1.15rem; color:#fff;">
+              <span>Total Payable Amount:</span>
+              <strong id="modalGrandTotal" style="color:var(--emerald-liquid);">₹3,538</strong>
+            </div>
+          </div>
+
+          <button class="btn-complete-payment" id="btnPayAmount" style="width:100%; padding:16px; font-size:1.1rem; border-radius:var(--radius-pill);">
+            Pay ₹3,538 Now
+          </button>
+        </div>
+
+        <!-- Success Screen -->
+        <div id="checkoutSuccessScreen" style="display:none; flex-direction:column; align-items:center; text-align:center; padding:32px 16px; gap:18px;">
+          <div style="width:72px; height:72px; border-radius:50%; background:rgba(16,185,129,0.18); border:2px solid var(--emerald-liquid); color:var(--emerald-liquid); display:flex; align-items:center; justify-content:center; box-shadow:0 0 35px var(--emerald-glow);">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <h2 style="font-size:1.6rem; font-weight:800; color:#fff;">Payment Successful!</h2>
+          <p style="font-size:0.92rem; color:var(--text-muted); max-width:440px;">
+            <strong id="successAmountText" style="color:var(--emerald-liquid);">₹2,999</strong> voice credits have been added to your balance. Your telephony trunk is immediately active.
+          </p>
+
+          <div class="glass-panel" style="padding:18px 26px; width:100%; text-align:left; font-size:0.88rem; display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-subtle);">Transaction Ref:</span>
+              <span class="mono" id="successTxnRef" style="color:#fff; font-weight:700;">PAY-991204</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-subtle);">New Wallet Balance:</span>
+              <span class="mono" id="successNewBalance" style="color:var(--emerald-liquid); font-weight:800;">₹7,249.00</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-subtle);">Status:</span>
+              <span style="color:var(--emerald-liquid); font-weight:700;">● Confirmed by NPCI</span>
+            </div>
+          </div>
+
+          <button class="btn-large-recharge" style="width:100%; justify-content:center; padding:14px; font-size:1rem; margin-top:10px;" onclick="window.rechargeCtrl.closeCheckoutModal()">
+            Return to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL 2: DUAL-TRACK CALL INSPECTOR ─────────────────────────────────── -->
+  <div class="modal-overlay" id="callInspectorModal">
+    <div class="modal-content" style="max-width: 980px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="inspectorCallerName">Amit Sharma (+91 98765 43210)</h3>
+          <div class="mono" style="font-size:0.75rem; color:var(--text-subtle);" id="inspectorCallSid">HYD13-T11-1789976951.70159</div>
+        </div>
+        <button class="modal-close" id="closeCallInspector">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Dual Waveform Player -->
+        <div class="player-container">
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">
+            <span style="color:var(--cyan-liquid);">● Left Channel: Caller Voice (8kHz μ-law)</span>
+            <span style="color:var(--emerald-liquid);">● Right Channel: AI Agent Voice (Priya)</span>
+          </div>
+
+          <div style="width:100%; height:130px; background:rgba(6,10,20,0.85); border-radius:var(--radius-md); position:relative; cursor:pointer; overflow:hidden; border:1px solid var(--glass-border);">
+            <canvas id="waveformCanvas"></canvas>
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:16px;">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <button class="btn-play-pause" id="btnPlayPauseAudio" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, var(--indigo-liquid), var(--cyan-liquid)); border:none; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 0 20px var(--indigo-glow);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </button>
+              <span class="mono" id="audioTimeDisplay" style="font-size:0.9rem; color:var(--text-muted);">0:00 / 2:18</span>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:0.75rem; color:var(--text-subtle); text-transform:uppercase; font-weight:800;">Speed:</span>
+              <button class="chip active" data-speed="1.0">1.0x</button>
+              <button class="chip" data-speed="1.25">1.25x</button>
+              <button class="chip" data-speed="1.5">1.5x</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Latency Waterfall Card -->
+        <div class="waterfall-card" style="margin-top:24px; padding:22px;">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:800; text-transform:uppercase; color:var(--text-subtle); margin-bottom:12px;">
+            <span>Conversational Turn Latency Budget</span>
+            <span class="mono" id="waterfallTotalLabel" style="color:var(--emerald-liquid); font-weight:800;">Total: 640 ms</span>
+          </div>
+          <div style="display:flex; height:36px; border-radius:var(--radius-sm); overflow:hidden; margin-bottom:12px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+            <div id="segStt" style="background:#3b82f6; width:25%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#fff;">STT: 180ms</div>
+            <div id="segLlm" style="background:#8b5cf6; width:35%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#fff;">LLM: 240ms</div>
+            <div id="segTts" style="background:#10b981; width:30%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#fff;">TTS: 215ms</div>
+            <div id="segNet" style="background:#f59e0b; width:10%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#fff;">40ms</div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-muted);">
+            <span>● Deepgram Nova-2 (STT)</span>
+            <span>● GPT-4o-mini TTFT</span>
+            <span>● ElevenLabs Flash v2.5</span>
+            <span>● Telecom Playout</span>
+          </div>
+        </div>
+
+        <!-- Synchronized Transcript -->
+        <div style="margin-top:24px;">
+          <div style="font-size:0.82rem; font-weight:800; text-transform:uppercase; color:var(--text-subtle); margin-bottom:12px;">
+            Synchronized Conversation Turns (Click any line to scrub audio)
+          </div>
+          <div class="transcript-box" id="inspectorTranscriptBox" style="display:flex; flex-direction:column; gap:12px; max-height:250px; overflow-y:auto;">
+            <!-- Transcript turns injected by player.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL 3: OUTBOUND CALL DIALPAD & CTC DISPATCHER ──────────────────── -->
+  <div class="modal-overlay" id="outboundCallModal">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Outbound Phone Dispatcher</h3>
+          <div style="font-size:0.75rem; color:var(--text-subtle);">Smartflo Click-to-Call Carrier Trunk</div>
+        </div>
+        <button class="modal-close" id="closeOutboundModal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 24px 28px;">
+        <!-- Lead Name input -->
+        <div style="margin-bottom: 14px;">
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-subtle); text-transform:uppercase;">Lead / Contact Name (Optional)</label>
+          <input type="text" id="outboundContactName" class="currency-input" placeholder="e.g. Vikram Malhotra" style="padding:10px 16px; font-size:0.9rem; font-weight:600; margin-top:4px;" value="">
+        </div>
+
+        <!-- Phone Number Display -->
+        <div class="dialpad-display" style="margin-bottom: 16px;">
+          <div class="dialpad-input-area">
+            <span class="dialpad-country-code">+91</span>
+            <input type="text" id="dialpadNumberInput" class="dialpad-number-input" placeholder="9876543210" maxlength="13" autofocus>
+          </div>
+          <div class="dialpad-action-btns">
+            <button class="dialpad-icon-btn" id="dialpadBackspaceBtn" title="Backspace">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>
+            </button>
+            <button class="dialpad-icon-btn" id="dialpadClearBtn" title="Clear">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Agent Persona Selection -->
+        <div style="margin-bottom: 16px;">
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-subtle); text-transform:uppercase; margin-bottom:6px; display:block;">Select AI Voice Persona</label>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div class="agent-select-chip chip active" data-agent="Rahul" style="padding:10px 14px; text-align:center; cursor:pointer;">
+              <strong>Rahul</strong>
+              <div style="font-size:0.7rem; color:var(--text-subtle);">Real Estate & Sales</div>
+            </div>
+            <div class="agent-select-chip chip" data-agent="Priya" style="padding:10px 14px; text-align:center; cursor:pointer;">
+              <strong>Priya</strong>
+              <div style="font-size:0.7rem; color:var(--text-subtle);">Support & Inbound</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Toggle (Live vs Dry Run) -->
+        <div style="margin-bottom: 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:0.75rem; font-weight:700; color:var(--text-subtle); text-transform:uppercase;">Dispatch Trunk Mode</span>
+            <div style="display:flex; gap:6px;">
+              <button class="filter-pill active" id="modeBtnLive" style="padding:4px 12px; font-size:0.75rem;">Live Trunk</button>
+              <button class="filter-pill" id="modeBtnDry" style="padding:4px 12px; font-size:0.75rem;">Dry Run</button>
+            </div>
+          </div>
+          <div id="outboundModeNote" style="font-size:0.75rem; color:var(--emerald-liquid); font-weight:600;">
+            Live Call: Rings destination phone via Smartflo Click-to-Call trunk.
+          </div>
+        </div>
+
+        <!-- Interactive 12-Key DTMF Dialpad -->
+        <div class="dialpad-container" style="margin-bottom: 20px;">
+          <div class="dialpad-grid">
+            <div class="dialpad-key" data-digit="1"><div class="dialpad-key-num">1</div><div class="dialpad-key-letters">~</div></div>
+            <div class="dialpad-key" data-digit="2"><div class="dialpad-key-num">2</div><div class="dialpad-key-letters">ABC</div></div>
+            <div class="dialpad-key" data-digit="3"><div class="dialpad-key-num">3</div><div class="dialpad-key-letters">DEF</div></div>
+            <div class="dialpad-key" data-digit="4"><div class="dialpad-key-num">4</div><div class="dialpad-key-letters">GHI</div></div>
+            <div class="dialpad-key" data-digit="5"><div class="dialpad-key-num">5</div><div class="dialpad-key-letters">JKL</div></div>
+            <div class="dialpad-key" data-digit="6"><div class="dialpad-key-num">6</div><div class="dialpad-key-letters">MNO</div></div>
+            <div class="dialpad-key" data-digit="7"><div class="dialpad-key-num">7</div><div class="dialpad-key-letters">PQRS</div></div>
+            <div class="dialpad-key" data-digit="8"><div class="dialpad-key-num">8</div><div class="dialpad-key-letters">TUV</div></div>
+            <div class="dialpad-key" data-digit="9"><div class="dialpad-key-num">9</div><div class="dialpad-key-letters">WXYZ</div></div>
+            <div class="dialpad-key" data-digit="*"><div class="dialpad-key-num">*</div><div class="dialpad-key-letters"></div></div>
+            <div class="dialpad-key" data-digit="0"><div class="dialpad-key-num">0</div><div class="dialpad-key-letters">+</div></div>
+            <div class="dialpad-key" data-digit="#"><div class="dialpad-key-num">#</div><div class="dialpad-key-letters"></div></div>
+          </div>
+        </div>
+
+        <!-- Telemetry Status Panel (Hidden by default, shown during call) -->
+        <div id="outboundTelemetryBox" class="glass-panel" style="display:none; padding:14px 18px; margin-bottom:18px; font-size:0.85rem;">
+          <div id="telemetryStatusText" style="font-weight:700; margin-bottom:4px;">Connecting to Smartflo Trunk...</div>
+          <div id="telemetryDetailText" style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">Target: +91</div>
+        </div>
+
+        <!-- Initiate Call Button -->
+        <button class="btn-initiate-call" id="btnInitiateOutboundCall">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span>Initiate Outbound Call</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" style="position:fixed; bottom:24px; right:24px; display:flex; flex-direction:column; gap:10px; z-index:200;"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
